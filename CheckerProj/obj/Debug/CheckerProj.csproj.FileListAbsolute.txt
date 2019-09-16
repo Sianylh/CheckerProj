@@ -1,0 +1,15 @@
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\CheckerProj.csprojAssemblyReference.cache
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\MainWindow.g.cs
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\App.g.cs
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\CheckerProj_MarkupCompile.cache
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\CheckerProj_MarkupCompile.lref
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\bin\Debug\CheckerProj.exe.config
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\bin\Debug\CheckerProj.exe
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\bin\Debug\CheckerProj.pdb
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\MainWindow.baml
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\CheckerProj.g.resources
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\CheckerProj.Properties.Resources.resources
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\CheckerProj.csproj.GenerateResource.cache
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\CheckerProj.csproj.CoreCompileInputs.cache
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\CheckerProj.exe
+C:\Users\debopriyo.bhattachar\source\repos\CheckerProj\CheckerProj\obj\Debug\CheckerProj.pdb
