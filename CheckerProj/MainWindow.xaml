@@ -88,26 +88,26 @@
                             <RadioButton Name="auth2" Checked="auth_option" Content="UserID and Password" Margin="0,0,0,-0.2"/>
                         </StackPanel>
 
-                      
+
                         <Button Content="Connect" HorizontalAlignment="Left" Margin="45,231,0,0" VerticalAlignment="Top" Width="75" Click="Connection_Click" Height="22"/>
                         <Button Content="Disonnect" HorizontalAlignment="Left" Margin="154,231,0,0" VerticalAlignment="Top" Width="75" Click="DisConnect_Click" Height="22"/>
                         <Button Content="Connection Check" HorizontalAlignment="Left" Margin="64,273,79.155,0" VerticalAlignment="Top" Width="135" Click="ConButton_Click" Height="22"/>
 
 
-                        <Button Content="Test 1" HorizontalAlignment="Left" Margin="9.6,231,0,0" VerticalAlignment="Top" Width="75" Click="Test1_Click" Grid.Column="1" Height="22"/>
+                        <Button Content="Start" HorizontalAlignment="Left" Margin="9.6,231,0,0" VerticalAlignment="Top" Width="75" Click="Start_Click" Grid.Column="1" Height="22"/>
 
                     </Grid>
 
                 </TabItem>
-                
+
                 <TabItem Header="Results" Padding="10 5">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"></RowDefinition>
-                            
+
                             <RowDefinition Height="5"></RowDefinition>
 
-                            <RowDefinition Height="3.5*"></RowDefinition>
+                            <RowDefinition Height="2.5*"></RowDefinition>
                         </Grid.RowDefinitions>
 
 
@@ -121,18 +121,24 @@
                         <ListView Grid.Row="0" x:Name="RawOut" x:FieldModifier="public" Margin="5" FontWeight="Medium" FontSize="12">
 
 
-                                <TextBlock Text="Choose Queries:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="22" Width="245"/>
-                                <ComboBox x:Name="options" IsEditable="False"  HorizontalAlignment="Left" Width="245"/>
-                                <Button Content="Run" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Width="90" Click="Run_Routine" Height="22"/>
-                                <Button Content="Run All" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Width="90" Click="RunAll_Routine" Height="22"/>
-
-
-
+                            <TextBlock Text="Choose Queries:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="22" Width="245" Margin = "10,0,0,0"/>
+                            <ComboBox x:Name="options" IsEditable="False" Margin="10,10,0,0" HorizontalAlignment="Left" Width="245" SelectionChanged="FirstCB_SelectionChanged" DropDownClosed="FirstCB_DropDownClosed"/>
+                            <ComboBox x:Name="options_2" IsEditable="False" Margin="280,-22,0,0" HorizontalAlignment="Left" Width="245"/>
+                            
+                            <Button Content="Run Group" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="90" Click="Run_Routine" Height="22"/>
+                            <Button Content="Run" HorizontalAlignment="Left" Margin="280,-22,0,0" VerticalAlignment="Top" Width="90" Click="RunEach_Routine" Height="22"/>
+                            <TextBlock Text="Output Filter:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="22" Width="245" Margin = "10,20,0,0"/>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton x:Name="both" GroupName="outFilter" Content="Both" Checked="Both" Margin = "5,0,0,0" />
+                                <RadioButton x:Name="sOnly" GroupName="outFilter" Content="Success Only" Checked="SOnly" Margin = "5,0,0,0"/>
+                                <RadioButton x:Name="fOnly" GroupName="outFilter" Content="Failure Only" Checked="FOnly" Margin = "5,0,0,0"/>
+                            </StackPanel >
 
                         </ListView>
+
                         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="#999"></GridSplitter>
                         <DataGrid AutoGenerateColumns="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ColumnWidth="*" Grid.Row="2" x:Name="execResults" ItemsSource="{Binding}" x:FieldModifier="public" Margin="5" FontWeight="Medium" FontSize="12"></DataGrid>
-                        
+
                     </Grid>
 
 

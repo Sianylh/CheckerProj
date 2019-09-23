@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////////////////////////
 // MainWindow.xaml.cs - Allows user to connect and find bindings, and execute them //
 //                                                                                 //
-// ver 2.1                                                                         //
+// ver 3.0                                                                         //
 // Author: Debopriyo Bhattacharya                                                  //
 //                                                                                 //
 /////////////////////////////////////////////////////////////////////////////////////
@@ -16,6 +16,11 @@
  * 
  * Maintenance History:
  * --------------------
+ * ver 3.0 : 23 Sept 2019
+ * - added second dropdown list of individual queries in a group, 
+ *   which gets generated based on selection of the group
+ * - ability to run queries as a group or run individual queries
+ * - radiobutton to hide success or failures or choose to see them both
  * ver 2.1 : 14 Sept 2019
  * - added datagrid to display name of query group, status of execution, query, details  
  * ver 2.0 : 13 Sept 2019
@@ -31,7 +36,8 @@
  * Requirements: Must have either login ID and Password for the MSSQL database connection 
  * Or have windows authentication activated for the connection
  * 
- * USE: Execute program, connect, check connection, 
+ * USE: Execute program, connect, check connection, Click on Test1 for now, 
+ * then in Results tab select binding group and Run. 
  * 
  * 
  */
@@ -72,10 +78,16 @@ namespace CheckerProj
     public partial class MainWindow : Window
     {
         SqlConnection cnn;
+        List<string> allQueries = new List<string>();
+        List<string> allNames = new List<string>();
         Hashtable dropNames = new Hashtable();
+        Hashtable dropNames_2 = new Hashtable();
+        List<ExecBinding> items = new List<ExecBinding>();
+        bool handle = true;  //to handle dropdown change event
         public MainWindow()
         {
             InitializeComponent();
+            both.IsChecked = true;
             genListView();
         }
 
@@ -190,13 +202,15 @@ namespace CheckerProj
                 Status.Content = "No Connection";
         }
 
-        private void Test1_Click(object sender, RoutedEventArgs e)
+        private void Start_Click(object sender, RoutedEventArgs e)
         {
 
             Status.Content = "Finding Queries";
 
             //string queryString = "SELECT [queryText] FROM[openemr].[dbo].[queries]; ";
-            string queryString = $@" ";   // Here add the query to get all bindings
+
+            //We will either take user input or make other changes to make this easily modifiable by user
+            string queryString = $@"";
             int queryCounter=0;
 
             if (cnn != null && cnn.State == ConnectionState.Open)
@@ -204,8 +218,6 @@ namespace CheckerProj
                 SqlDataReader rdr = null;
                 SqlCommand cmd;
 
-                List<string> allQueries = new List<string>();
-                List<string> allNames = new List<string>();
                 try
                 {
                     cmd = new SqlCommand(queryString, cnn);
@@ -339,58 +351,34 @@ namespace CheckerProj
         }
 
 
-        private void queryExecutor(List<string> allQueries, string name)
+        private void queryExecutor()
         {
+            Status.Content = "Running Queries";
+            items.Clear();//Clearing the previous output items
+
             //clear the current datagrid
             execResults.Items.Clear();
 
             int querySuccess = 0;
             int queryFails = 0;
-            SqlCommand eachCmd;
-            string status="", detail="";
+
             //run each query
             //
 
-            foreach (var eachQuery in allQueries)
+            foreach (string key in dropNames_2.Keys)
             {
-                try
-                {
-
-                    eachCmd = new SqlCommand((string)eachQuery, cnn);
-                    int a = eachCmd.ExecuteNonQuery();
-
-                    if (a == 0)//No Rows were affected
-                    {
-                        querySuccess++;
-                        status = "Success";
-                        detail = "No Rows Affected.";
-                        Console.WriteLine("No Rows Affected.");
-                    }
-                    else//Updated.
-                    {
-                        querySuccess++;
-                        status = "Success";
-                        detail = "Worked as Expected.";
-                        Console.WriteLine("Success!! {0} Rows Affected.", a);
-                    }
-                }
-                catch (Exception ex)
-                {
+                string command = (string)((List<string>)dropNames_2[key])[0];
+                
+                ExecBinding result = RunQuery(key,command);
+                items.Add(result);
+                if (result.Status == "Success")
+                    querySuccess++;
+                else
                     queryFails++;
-                    status = "Failure";
-                    detail = ex.Message;
-                    Console.WriteLine("Exception! Could not Execute Query.");
-                    Console.WriteLine(ex.Message);
-                }
-                finally
-                {
-                    List<ExecBinding> items = new List<ExecBinding>();
-                    items.Add(new ExecBinding() { Name = name, Status = status, Detail = detail, Query = eachQuery });
-                    execResults.Items.Add(items);
-
-                }
-
             }
+
+            //Now Display all Items here
+            hider("SomethingRandomThatDoesn'tMatch");
 
             Status.Content = "Success: " + querySuccess + " Fails: " + queryFails;
 
@@ -398,77 +386,155 @@ namespace CheckerProj
 
         }
 
-        private void Anal1_Click(object sender, RoutedEventArgs e)
+        public ExecBinding RunQuery(string key,string command)
         {
+            ExecBinding result;
+            SqlCommand eachCmd;
+            string status = "", detail = "";
+            try
+            {
+                eachCmd = new SqlCommand(command, cnn);
+                int a = eachCmd.ExecuteNonQuery();
 
+                if (a == 0)//No Rows were affected
+                {
+                    status = "Success";
+                    detail = "No Rows Affected.";
+                    Console.WriteLine("No Rows Affected.");
+                }
+                else//Updated.
+                {
+                    status = "Success";
+                    detail = "Worked as Expected.";
+                    Console.WriteLine("Success!! {0} Rows Affected.", a);
+                }
+            }
+            catch (Exception ex)
+            {
+                status = "Failure";
+                detail = ex.Message;
+                Console.WriteLine("Exception! Could not Execute Query.");
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                result = new ExecBinding() { Name = key, Status = status, Detail = detail, Query = command };
+            }
+            return result;
+        }
+
+        private void Both(object sender, RoutedEventArgs e)
+        {
+            hider("SomethingRandomThatDoesn'tMatch");
+            execResults.Items.Refresh();
         }
 
 
-
-        private void localTop_Click(object sender, RoutedEventArgs e)
+        private void SOnly(object sender, RoutedEventArgs e)
         {
-
+            hider("Failure");
+            execResults.Items.Refresh();
         }
 
-        private void localFiles_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void FOnly(object sender, RoutedEventArgs e)
         {
-
+            hider("Success");
+            execResults.Items.Refresh();
         }
 
-        private void localUp_Click(object sender, RoutedEventArgs e)
+        private void hider(string str)
         {
+            //First we clear everything
+            execResults.Items.Clear();
 
+            foreach (ExecBinding p in items)
+            {
+                if (p.Status != str)
+                    execResults.Items.Add(p);
+            }
         }
 
-        private void localDirs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void FirstCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            ComboBox cmb = sender as ComboBox;
+            handle = !cmb.IsDropDownOpen;
+            genOptions2();
         }
 
-        private void RemoteTop_Click(object sender, RoutedEventArgs e)
-        {
 
+        private void FirstCB_DropDownClosed(object sender, EventArgs e)
+        {
+            if (handle)
+                genOptions2();
+            handle = true;
         }
 
-        private void remoteFiles_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void genOptions2()
         {
+            dropNames_2.Clear(); //We clear the hashtable for second dropdown menu
+            options_2.Items.Clear(); //We clear the second dropdown menu
+            string choice = options.SelectedItem.ToString();
+            Console.WriteLine("You chose:" + choice);
+            int count = ((List<string>)dropNames[choice]).Count;
+            Console.WriteLine("Total Queries in this Group:" + count);
+            if (count == 1)
+            {
+                dropNames_2.Add(choice, dropNames[choice]);
+                options_2.Items.Add(choice);
+            }
+            else
+            {
+                for (var i = 0; i < allNames.Count; i++)
+                {
+                    
+                    if (choice == allNames[i].Split(' ').First())
+                    {
+                        
+                        dropNames_2.Add(allNames[i], new List<string>() { allQueries[i] });
+                        options_2.Items.Add(allNames[i]);
+                    }
 
+                }
+
+
+            }
+
+            options_2.SelectedItem = options_2.Items[0];
         }
-
-        private void RemoteUp_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void remoteDirs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void clear_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Anal2_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void selectedFiles_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
         private void Run_Routine(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Running"+options.SelectedItem);
-            queryExecutor((List<string>)dropNames[options.SelectedItem], (string)options.SelectedItem);
-            
+            execResults.Items.Clear();
+            Console.WriteLine("Running Group"+options.SelectedItem);
+            //queryExecutor((List<string>)dropNames[options.SelectedItem], (string)options.SelectedItem);
+            queryExecutor();
         }
 
-        private void RunAll_Routine(object sender, RoutedEventArgs e)
+        private void RunEach_Routine(object sender, RoutedEventArgs e)
         {
+            items.Clear();//Clearing the previous output items
+
+            execResults.Items.Clear();//clear the current datagrid
+
+            int querySuccess = 0;
+            int queryFails = 0;
+
+            string key = (string)options_2.SelectedItem;
+            string command = (string)((List<string>)dropNames_2[key])[0];
+
+            ExecBinding result = RunQuery(key, command);
+            items.Add(result);
+
+            if (result.Status == "Success")
+                querySuccess++;
+            else
+                queryFails++;
+
+            //Now Display all Items here
+            hider("SomethingRandomThatDoesn'tMatch");
+
+            Status.Content = "Success: " + querySuccess + " Fail: " + queryFails;
+
+            execResults.Items.Refresh();
 
         }
 
