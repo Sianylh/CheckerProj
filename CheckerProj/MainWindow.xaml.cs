@@ -80,8 +80,9 @@ namespace CheckerProj
         SqlConnection cnn;
         List<string> allQueries = new List<string>();
         List<string> allNames = new List<string>();
-        Hashtable dropNames = new Hashtable();
-        Hashtable dropNames_2 = new Hashtable();
+        Hashtable dropNames = new Hashtable();  //Not using currently except for generating the groups
+                                                //Might find a use for it later on, can be replaced by a simple list
+        Hashtable dropNames_2 = new Hashtable();// Using this mostly since we are generating a second dropdown list
         List<ExecBinding> items = new List<ExecBinding>();
         bool handle = true;  //to handle dropdown change event
         public MainWindow()
@@ -210,7 +211,25 @@ namespace CheckerProj
             //string queryString = "SELECT [queryText] FROM[openemr].[dbo].[queries]; ";
 
             //We will either take user input or make other changes to make this easily modifiable by user
-            string queryString = $@"";
+            string queryString = $@" SELECT 
+               b.BindingClassificationCD
+              ,CASE b.BindingClassificationCD
+                    WHEN 'Event' THEN 1
+                     WHEN 'Rule' THEN 2
+                     WHEN 'Population' THEN 3
+                     WHEN 'Summary' THEN 4
+                     WHEN 'ReportingView' THEN 5
+                     END AS ClassificationSortNBR
+              ,b.BindingNM
+              ,oa.AttributeValueLongTXT
+       FROM EDWAdmin.CatalystAdmin.ObjectAttributeBASE oa
+       INNER JOIN  EDWAdmin.CatalystAdmin.BindingBASE b
+       ON oa.ObjectID = b.BindingID
+              INNER JOIN EDWAdmin.CatalystAdmin.DataMartBASE dm
+              ON dm.DataMartID = b.DataMartID
+       WHERE oa.AttributeNM = 'UserDefinedSQL'
+              AND dm.DataMartNM = 'SharedClinicalProfiling'
+       ORDER BY ClassificationSortNBR, BindingNM; ";
             int queryCounter=0;
 
             if (cnn != null && cnn.State == ConnectionState.Open)

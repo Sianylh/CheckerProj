@@ -91,7 +91,7 @@
 
                         <Button Content="Connect" HorizontalAlignment="Left" Margin="45,231,0,0" VerticalAlignment="Top" Width="75" Click="Connection_Click" Height="22"/>
                         <Button Content="Disonnect" HorizontalAlignment="Left" Margin="154,231,0,0" VerticalAlignment="Top" Width="75" Click="DisConnect_Click" Height="22"/>
-                        <Button Content="Connection Check" HorizontalAlignment="Left" Margin="64,273,79.155,0" VerticalAlignment="Top" Width="135" Click="ConButton_Click" Height="22"/>
+                        <Button Content="Connection Check" HorizontalAlignment="Left" Margin="64,273,0,0" VerticalAlignment="Top" Width="145" Click="ConButton_Click" Height="22"/>
 
 
                         <Button Content="Start" HorizontalAlignment="Left" Margin="9.6,231,0,0" VerticalAlignment="Top" Width="75" Click="Start_Click" Grid.Column="1" Height="22"/>
@@ -124,7 +124,7 @@
                             <TextBlock Text="Choose Queries:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="22" Width="245" Margin = "10,0,0,0"/>
                             <ComboBox x:Name="options" IsEditable="False" Margin="10,10,0,0" HorizontalAlignment="Left" Width="245" SelectionChanged="FirstCB_SelectionChanged" DropDownClosed="FirstCB_DropDownClosed"/>
                             <ComboBox x:Name="options_2" IsEditable="False" Margin="280,-22,0,0" HorizontalAlignment="Left" Width="245"/>
-                            
+
                             <Button Content="Run Group" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="90" Click="Run_Routine" Height="22"/>
                             <Button Content="Run" HorizontalAlignment="Left" Margin="280,-22,0,0" VerticalAlignment="Top" Width="90" Click="RunEach_Routine" Height="22"/>
                             <TextBlock Text="Output Filter:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="22" Width="245" Margin = "10,20,0,0"/>
